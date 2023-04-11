@@ -11,18 +11,21 @@ Go to [this](https://developer.nvidia.com/embedded/learn/get-started-jetson-agx-
 Firs of all we will have to install python dependecies. For that open a terminal an execute the followin commands.
 
 ```bash
-pip install --upgrade setuptools pip --user
-pip install --ignore-installed PyYAML
-pip install Pillow
+sudo apt-get update
+sudo apt-get install python3-pip -y
 
-pip install nvidia-pyindex
-pip install --upgrade nvidia-tensorrt
-pip install pycuda
+pip3 install --upgrade setuptools pip --user
+pip3 install --ignore-installed PyYAML
+pip3 install Pillow
 
-pip install protobuf<4.21.3
-pip install onnxruntime-gpu
-pip install onnx>=1.9.0
-pip install onnx-simplifier>=0.3.6 --user
+pip3 install nvidia-pyindex
+pip3 install --upgrade nvidia-tensorrt
+pip3 install pycuda
+
+pip3 install protobuf<4.21.3
+pip3 install onnxruntime-gpu
+pip3 install onnx>=1.9.0
+pip3 install onnx-simplifier>=0.3.6 --user
 ```
 
 The install opencv with gpu capability. Follow this steps (see the [link](https://qengineering.eu/install-opencv-4.5-on-jetson-nano.html)):
