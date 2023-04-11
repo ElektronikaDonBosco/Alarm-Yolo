@@ -17,6 +17,7 @@ sudo apt-get install python3-pip -y
 pip3 install --upgrade setuptools pip --user
 pip3 install --ignore-installed PyYAML
 pip3 install Pillow
+pip3 install python-telegram-bot
 
 pip3 install nvidia-pyindex
 sudo apt-get install nvidia-tensorrt -y
