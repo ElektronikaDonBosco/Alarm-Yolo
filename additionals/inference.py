@@ -9,6 +9,33 @@ from collections import OrderedDict,namedtuple
 import os
 import random
 
+def gstreamer_pipeline(
+    sensor_id=0,
+    capture_width=1920,
+    capture_height=1080,
+    display_width=960,
+    display_height=540,
+    framerate=30,
+    flip_method=0,
+):
+    return (
+        "nvarguscamerasrc sensor-id=%d !"
+        "video/x-raw(memory:NVMM), width=(int)%d, height=(int)%d, framerate=(fraction)%d/1 ! "
+        "nvvidconv flip-method=%d ! "
+        "video/x-raw, width=(int)%d, height=(int)%d, format=(string)BGRx ! "
+        "videoconvert ! "
+        "video/x-raw, format=(string)BGR ! appsink"
+        % (
+            sensor_id,
+            capture_width,
+            capture_height,
+            framerate,
+            flip_method,
+            display_width,
+            display_height,
+        )
+    )
+
 class Inference ():
     def __init__(self,model_path, data):
         self.modelpath = model_path
@@ -140,20 +167,30 @@ class Inference ():
             binding_addrs['images'] = int(tmp.data_ptr())
             context.execute_v2(list(binding_addrs.values()))
 
-        img = cv2.cuda.cvtColor(img, cv2.COLOR_BGR2RGB)
-        im, ratio, dwdh = self.preprocess(img, device)
-        
-        boxes, scores, classes = self.predict(im, binding_addrs, context, bindings)
+        # take image
+        video_capture = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
+        if video_capture.isOpened():
+            try:
+                while gv.DETECTION_RUNNING:
+                    ret_val, frame = video_capture.read()
+                    # Check to see if the user closed the window
+                    # Under GTK+ (Jetson Default), WND_PROP_VISIBLE does not work correctly. Under Qt it does
+                    # GTK - Substitute WND_PROP_AUTOSIZE to detect if window has been closed by user
+                    img = cv2.cuda.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    im, ratio, dwdh = self.preprocess(img, device)
+                    
+                    boxes, scores, classes = self.predict(im, binding_addrs, context, bindings)
 
-        for det in classes:
-            if det == 0 or det == names[0]:
-                detected =True
-            if detected:
-                self.data.global_data = True
-            else:
-                self.data.global_data = False
-            detected = False
+                    for det in classes:
+                        if det == 0 or det == names[0]:
+                            self.data.global_data = True
+                            yield frame
+                        else:
+                            self.data.global_data = False
 
+            finally:
+                video_capture.release()
+        else:
+            print("Error: Unable to open camera")
 
-        
         # result = self.drawdata(im, boxes, scores, classes, names, colors, ratio, dwdh)

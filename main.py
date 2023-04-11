@@ -4,28 +4,22 @@ import cv2
 import torch
 import random
 import argparse
+import threading
 from telegram import *
 from telegram.ext import *
 
-class GlobalChange(object):
-    def __init__(self):
-        self._global_data = 10.0
-        self._observers = []
+frame = None
+inference = None
+chat_id = ''
+thread1 = threading.Thread(target=tracking)
 
-    @property
-    def global_data(self):
-        return self._global_data
-
-    @global_data.setter
-    def global_data(self, value):
-        self._global_data = value
-        for callback in self._observers:
-            print('announcing change')
-            callback(self._global_data)
-
-    def bind_to(self, callback):
-        print('bound')
-        self._observers.append(callback)
+def tracking():
+    global frame
+    global inference
+    global chat_id
+    while gv.DETECTION_RUNNING:
+        frame = inference.next()
+        bot.send_message(chat_id=str(chat_id),text="Pertsona dago")
 
 def startCommand(update: Update, context: CallbackContext):
     buttons = [[KeyboardButton(text_laguntza),KeyboardButton(text_konektatu)]
@@ -43,16 +37,26 @@ def connect(update: Update, context: CallbackContext):
     update.message.reply_text("Konektatuta dago")
 
 def piztu(update: Update, context: CallbackContext):
+    global thread1
     gv.DETECTION_RUNNING = True
+    thread1.start()
     update.message.reply_text("Piztu da")
 
 def itzali(update: Update, context: CallbackContext):
+    global frame
+    global thread1
+    thread1.stop()
     gv.DETECTION_RUNNING = False
+    frame = None
     update.message.reply_text("Itzali da")
 
 def argazkia(update: Update, context: CallbackContext):
-    gv.DETECTION_RUNNING = False
-    update.message.reply_text("Argazkia bidali da")
+    global frame
+    if frame != None:
+        context.bot.send_photo(chat_id=update.message.chat_id, photo=frame)
+        update.message.reply_text("Argazkia bidali da")
+    else:
+        update.message.reply_text("Ez dago argazkirik, beraz ez da bidali")
 
 def unknown(update: Update, context: CallbackContext):
     update.message.reply_text(
@@ -64,10 +68,9 @@ def unknown_text(update: Update, context: CallbackContext):
         "Sorry I can't recognize you , you said '%s'" % update.message.text)
     
 def main(model_path, classnames_path):
-    infer(model_path, classnames_path)
+    global inference
 
-    data = GlobalChange()
-    data.bind_to(argazkia)
+    inference = infer(model_path, classnames_path)
 
     updater = Updater(token="2115883750:AAGqskwSwvRD8iQlFA8vn9rUKG7DY8qM-jg")
     dispatcher = updater.dispatcher
@@ -95,7 +98,7 @@ def main(model_path, classnames_path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a ArcHydro schema')
     parser.add_argument('--model_path', metavar='path', required=True,
-                        help='the path to workspace')
+                        help='the path to model')
     args = parser.parse_args()
 
     main(args.model_path, args.classnames_path)
