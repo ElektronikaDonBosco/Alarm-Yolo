@@ -19,38 +19,30 @@ pip3 install --ignore-installed PyYAML
 pip3 install Pillow
 
 pip3 install nvidia-pyindex
-pip3 install --upgrade nvidia-tensorrt
-pip3 install pycuda
-
-pip3 install protobuf<4.21.3
-pip3 install onnxruntime-gpu
-pip3 install onnx>=1.9.0
-pip3 install onnx-simplifier>=0.3.6 --user
+sudo apt-get install nvidia-tensorrt -y
 ```
 
-The install opencv with gpu capability. Follow this steps (see the [link](https://qengineering.eu/install-opencv-4.5-on-jetson-nano.html)):
+The install opencv with gpu capability. Follow this steps (see the [link](https://qengineering.eu/install-opencv-4.5-on-jetson-nano.html) for more information):
 
 1- Enable the installation
 
 ```bash
-
 # a fresh start, so check for updates
 sudo apt-get update
-sudo apt-get upgrade
+# sudo apt-get upgrade
 # install nano
-sudo apt-get install nano
+sudo apt-get install nano -y
 # install dphys-swapfile
-sudo apt-get install dphys-swapfile
-# enlarge the boundary (4.5.2 and higher)
+sudo apt-get install dphys-swapfile -y
+# enlarge the boundary (4.5.2 and higher) 
 sudo nano /sbin/dphys-swapfile
-# give the required memory size
-sudo nano /etc/dphys-swapfile
+# change the varibale value
+# CONF_MAXSWAP=4096
 # reboot afterwards
-sudo reboot
 
 ```
 
-2- Install the repo an OpenCV
+2- Install the repo and OpenCV
 
 ```bash
 git clone Alarm-Yolo
@@ -58,7 +50,6 @@ cd Alarm_Yolo
 sudo chmod 755 ./OpenCV-4-6-0.sh
 ./OpenCV-4-6-0.sh
 # once the installation is done...
-rm OpenCV-4-6-0.sh
 # remove the dphys-swapfile now
 sudo /etc/init.d/dphys-swapfile stop
 sudo apt-get remove --purge dphys-swapfile
@@ -72,7 +63,7 @@ After having installed the dependencies there are two options. One is to just us
 1. Once in the folder of the repo run this in the terminal.
 
 ```bash
-python3 main.py --model_path yolov7-tiny-nms.trt
+python3 main.py --model_path models/yolov7-tiny-nms.trt
 ```
 
 After having installed the dependencies and opencv, download the yolov7 implementation and the needed weights. There are more weights into [this](https://github.com/WongKinYiu/yolov7/releases) folder
