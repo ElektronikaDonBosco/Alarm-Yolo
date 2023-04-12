@@ -1,8 +1,5 @@
 import additionals.inference as infer
 import additionals.globals as gv
-import cv2
-import torch
-import random
 import argparse
 import threading
 from telegram import *
