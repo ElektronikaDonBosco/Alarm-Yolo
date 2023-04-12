@@ -157,7 +157,7 @@ class Inference ():
     
     def main(self):
 
-        bindings, binding_addrs, context, device = self.loadmodel(model_path)
+        bindings, binding_addrs, context, device = self.loadmodel(self.model_path)
         names = self.readnames()
         # colors = {name:[random.randint(0, 255) for _ in range(3)] for i,name in enumerate(names)}
 
@@ -176,7 +176,7 @@ class Inference ():
                     # Check to see if the user closed the window
                     # Under GTK+ (Jetson Default), WND_PROP_VISIBLE does not work correctly. Under Qt it does
                     # GTK - Substitute WND_PROP_AUTOSIZE to detect if window has been closed by user
-                    img = cv2.cuda.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                    img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                     im, ratio, dwdh = self.preprocess(img, device)
                     
                     boxes, scores, classes = self.predict(im, binding_addrs, context, bindings)
