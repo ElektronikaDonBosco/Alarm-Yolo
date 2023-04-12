@@ -12,6 +12,9 @@ Firs of all we will have to install python dependecies. For that open a terminal
 
 ```bash
 sudo apt-get update
+sudo apt-get autoremove python3 -y
+sudo apt-get install python3.7 -y
+export PYTHONPATH=$PYTHONPATH:/usr/local/bin/python3.7
 sudo apt-get install python3-pip -y
 
 pip3 install --upgrade setuptools pip --user
@@ -41,7 +44,8 @@ After having seen the Jetpack version,, go to this [link](https://developer.down
 
 ```bash
 python3 -m pip install --upgrade pip
-python3 -m pip install aiohttp numpy=='1.19.4' scipy=='1.5.3' export "LD_LIBRARY_PATH=/usr/lib/llvm-8/lib:$LD_LIBRARY_PATH"
+python3 -m pip install aiohttp numpy=='1.19.4' scipy=='1.5.3' 
+export "LD_LIBRARY_PATH=/usr/lib/llvm-8/lib:$LD_LIBRARY_PATH"
 python3 -m pip install --upgrade protobuf
 python3 -m pip install --no-cache https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl
 ```

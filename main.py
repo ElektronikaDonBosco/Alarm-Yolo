@@ -2,8 +2,8 @@ import additionals.inference as infer
 import additionals.globals as gv
 import argparse
 import threading
-from telegram import *
-from telegram.ext import *
+from telegram import Update, KeyboardButton
+from telegram.ext import CallbackContext, Updater, CommandHandler, MessageHandler, Filters
 
 frame = None
 inference = None
@@ -22,7 +22,8 @@ def tracking(update: Update, context: CallbackContext):
     global chat_id
     while gv.DETECTION_RUNNING:
         frame = inference.next()
-        update.message.reply_text("Pertsona dago")
+        if gv.PERSON_DETECTED:
+            update.message.reply_text("Pertsona dago")
 
 thread1 = threading.Thread(target=tracking)
 
@@ -72,10 +73,10 @@ def unknown_text(update: Update, context: CallbackContext):
     update.message.reply_text(
         "Sorry I can't recognize you , you said '%s'" % update.message.text)
     
-def main(model_path, classnames_path):
+def main(model_path):
     global inference
 
-    inference = infer(model_path, classnames_path)
+    inference = infer(model_path)
 
     updater = Updater(token="6099780796:AAEg4EMmD2iuRe0LJvedPHSnsFLu1mfzY3c")
     dispatcher = updater.dispatcher
@@ -95,8 +96,8 @@ def main(model_path, classnames_path):
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a ArcHydro schema')
-    parser.add_argument('--model_path', metavar='path', required=True,
+    parser.add_argument('--model_path', value='models/yolov7-tiny-nms.trt', metavar='path', required=True,
                         help='the path to model')
     args = parser.parse_args()
 
-    main(args.model_path, args.classnames_path)
+    main(args.model_path)

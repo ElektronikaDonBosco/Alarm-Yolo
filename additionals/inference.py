@@ -37,9 +37,8 @@ def gstreamer_pipeline(
     )
 
 class Inference ():
-    def __init__(self,model_path, data):
+    def __init__(self,model_path):
         self.modelpath = model_path
-        self.data = data
 
     def __call__(self):
         self.main()
@@ -183,10 +182,11 @@ class Inference ():
 
                     for det in classes:
                         if det == 0 or det == names[0]:
-                            self.data.global_data = True
+                            gv.PERSON_DETECTED = True
                             yield frame
                         else:
-                            self.data.global_data = False
+                            gv.PERSON_DETECTED = False
+                            yield None
 
             finally:
                 video_capture.release()
