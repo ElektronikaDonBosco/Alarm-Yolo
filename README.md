@@ -1,6 +1,6 @@
 # YOLO - Jetson Nano
 
-Procedure to make inference in jetson Orin with yolo-v7. [Here](Object_detection_methods.md) you could find more information about object detection
+Procedure to make inference in Jetson Nano with yolo-v7. [Here](Object_detection_methods.md) you could find more information about object detection methods
 
 ## Set up Jetson Nano
 
