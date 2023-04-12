@@ -29,12 +29,11 @@ sudo apt-get install python3-pip -y
 pip3 install --upgrade setuptools pip --user
 pip3 install --ignore-installed PyYAML
 pip3 install Pillow
-# pip3 install opencv-python
 pip3 install python-telegram-bot
-
 pip3 install nvidia-pyindex
 sudo apt-get install nvidia-tensorrt -y
 ```
+
 For Pytorch installation, first we need to install dependencies and check the Jetpack version:
 
 ```bash
@@ -56,6 +55,10 @@ python3 -m pip install aiohttp numpy=='1.19.4' scipy=='1.5.3'
 export "LD_LIBRARY_PATH=/usr/lib/llvm-8/lib:$LD_LIBRARY_PATH"
 python3 -m pip install --upgrade protobuf
 python3 -m pip install --no-cache https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl
+```
+
+```bash
+pip3 install opencv-python
 ```
 
 After having installed the dependencies there are two options. One is to just use the yolov7.trt file to run the program and the second one is to do all from scratch. Both of them are explained bellow.
