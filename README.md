@@ -17,24 +17,67 @@ sudo apt-get install python3-pip -y
 pip3 install --upgrade setuptools pip --user
 pip3 install --ignore-installed PyYAML
 pip3 install Pillow
-pip3 install opencv-contrib-python
+pip3 install opencv-python
 pip3 install python-telegram-bot
 
 pip3 install nvidia-pyindex
 sudo apt-get install nvidia-tensorrt -y
 ```
 
+For Pytorch installation, first we need to check the Jetpack version:
+
+```bash
+sudo apt-cache show nvidia-jetpack
+```
+
+![Jetpack version](assets/20230412_120223_jetpack.png)
+
+After having seen the Jetpack version,, go to this [link](https://developer.download.nvidia.com/compute/redist/jp/). There find the mos apropiate version and copy the link. In our case the following one was selected *https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl*. So we execute the following command.
+
+```bash
+pip3 install --no-cache https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl
+```
+
 After having installed the dependencies there are two options. One is to just use the yolov7.trt file to run the program and the second one is to do all from scratch. Both of them are explained bellow.
 
-1. Once in the folder of the repo run this in the terminal.
+## Telegram bot creation
+
+* Search for @botfather in Telegram.
+
+```
+```
+
+![](assets/20230412_120813_Screenshot-2022-12-16-092357.png)
+
+* Start a conversation with BotFather by clicking on the Start button.
+
+![](assets/20230412_121259_image.png)
+
+* Type `/newbot`, and follow the prompts to set up a new bot. The BotFather will give you a token that you will use to authenticate bot and grant it access to the Telegram API.
+
+![](assets/20230412_121528_image.png)
 
 ## Run inference
+
+First of all we need to clone the repository and go to the folder.
+
+```bash
+git clone https://github.com/mikelalda/Alarm-Yolo.git
+
+cd Alarm-Yolo
+```
+
+In the file main.py we need to change the line 83 with our token.
+
+![](assets/20230412_121807_image.png)
+
+Once having done all the steps, run this in the terminal.
 
 ```bash
 python3 main.py --model_path models/yolov7-tiny-nms.trt
 ```
 
-## To make a custom YOLOv7
+## To make a custom YOLOv7 Tensorrt file
 
 After having installed the dependencies and opencv, download the yolov7 implementation and the needed weights. There are more weights into [this](https://github.com/WongKinYiu/yolov7/releases) folder
 

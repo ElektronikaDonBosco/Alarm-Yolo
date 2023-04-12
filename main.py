@@ -11,15 +11,23 @@ from telegram.ext import *
 frame = None
 inference = None
 chat_id = ''
-thread1 = threading.Thread(target=tracking)
 
-def tracking():
+text_laguntza = "/laguntza"
+text_piztu = "/piztu"
+text_itzali = "/itzali"
+text_konektatu = "/konektatuta?"
+
+client = None
+
+def tracking(update: Update, context: CallbackContext):
     global frame
     global inference
     global chat_id
     while gv.DETECTION_RUNNING:
         frame = inference.next()
-        bot.send_message(chat_id=str(chat_id),text="Pertsona dago")
+        update.message.reply_text("Pertsona dago")
+
+thread1 = threading.Thread(target=tracking)
 
 def startCommand(update: Update, context: CallbackContext):
     buttons = [[KeyboardButton(text_laguntza),KeyboardButton(text_konektatu)]
@@ -72,15 +80,8 @@ def main(model_path, classnames_path):
 
     inference = infer(model_path, classnames_path)
 
-    updater = Updater(token="2115883750:AAGqskwSwvRD8iQlFA8vn9rUKG7DY8qM-jg")
+    updater = Updater(token="6099780796:AAEg4EMmD2iuRe0LJvedPHSnsFLu1mfzY3c")
     dispatcher = updater.dispatcher
-
-    text_laguntza = "/laguntza"
-    text_piztu = "/piztu"
-    text_itzali = "/itzali"
-    text_konektatu = "/konektatuta?"
-
-    client = None
 
     dispatcher.add_handler(CommandHandler("hasi", startCommand))
     updater.dispatcher.add_handler(CommandHandler('konektatu', connect))
