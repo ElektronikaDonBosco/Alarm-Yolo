@@ -24,7 +24,12 @@ pip3 install nvidia-pyindex
 sudo apt-get install nvidia-tensorrt -y
 ```
 
-For Pytorch installation, first we need to check the Jetpack version:
+For Pytorch installation, first we need to install dependencies and check the Jetpack version:
+
+```bash
+sudo apt-get -y update;
+sudo apt-get -y install autoconf bc build-essential g++-8 gcc-8 clang-8 lld-8 gettext-base gfortran-8 iputils-ping libbz2-dev libc++-dev libcgal-dev libffi-dev libfreetype6-dev libhdf5-dev libjpeg-dev liblzma-dev libncurses5-dev libncursesw5-dev libpng-dev libreadline-dev libssl-dev libsqlite3-dev libxml2-dev libxslt-dev locales moreutils openssl python-openssl rsync scons python3-pip libopenblas-dev
+```
 
 ```bash
 sudo apt-cache show nvidia-jetpack
@@ -35,7 +40,10 @@ sudo apt-cache show nvidia-jetpack
 After having seen the Jetpack version,, go to this [link](https://developer.download.nvidia.com/compute/redist/jp/). There find the mos apropiate version and copy the link. In our case the following one was selected *https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl*. So we execute the following command.
 
 ```bash
-pip3 install --no-cache https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl
+python3 -m pip install --upgrade pip
+python3 -m pip install aiohttp numpy=='1.19.4' scipy=='1.5.3' export "LD_LIBRARY_PATH=/usr/lib/llvm-8/lib:$LD_LIBRARY_PATH"
+python3 -m pip install --upgrade protobuf
+python3 -m pip install --no-cache https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl
 ```
 
 After having installed the dependencies there are two options. One is to just use the yolov7.trt file to run the program and the second one is to do all from scratch. Both of them are explained bellow.
@@ -45,6 +53,7 @@ After having installed the dependencies there are two options. One is to just us
 * Search for @botfather in Telegram.
 
 ```
+ba
 ```
 
 ![](assets/20230412_120813_Screenshot-2022-12-16-092357.png)
