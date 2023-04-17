@@ -12,18 +12,26 @@ Firs of all we will have to install python dependecies. For that open a terminal
 
 ```bash
 sudo apt-get update
-sudo apt-get install python3.7 -y
+sudo apt-get install python3.10 -y
+sudo apt-get install virtualenv -y
+sudo apt-get install nvidia-tensorrt -y
 export PYTHONPATH=$PYTHONPATH:/usr/local/bin/python3.7
 ```
 
 Select the python version you want to run as default
 
 ```bash
-sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.7
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.10
 sudo update-alternatives --config python
 ```
 
 ```bash
+mkdir .venv
+cd .venv
+python3 -m venv alarm_yolo
+cd ..
+source .venv/alarm_yolo/bin/activate
+
 sudo apt-get install python3-pip -y
 
 pip3 install --upgrade setuptools pip --user
@@ -31,7 +39,6 @@ pip3 install --ignore-installed PyYAML
 pip3 install Pillow
 pip3 install python-telegram-bot
 pip3 install nvidia-pyindex
-sudo apt-get install nvidia-tensorrt -y
 ```
 
 For Pytorch installation, first we need to install dependencies and check the Jetpack version:
