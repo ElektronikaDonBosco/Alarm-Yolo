@@ -32,7 +32,8 @@ Modify /usr/bin/pip file as:
 ```bash
 sudo vim /usr/bin/pip
 
-# press 'a' and make changes
+# press 'a' and make changes #!/usr/bin/python3.6 to #!/usr/bin/python3.8
+
 # then press Esc
 # and type ':wq'
 # press enter
