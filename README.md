@@ -27,9 +27,10 @@ sudo python3.8 setup.py install
 pip3 -V
 ```
 
-Modify /usr/bin/pip3 and /usr/bin/pip file as:
+Modify /usr/bin/pip file as:
+
 ```bash
-sudo vim /usr/bin/pip(3)
+sudo vim /usr/bin/pip
 
 # press 'a' and make changes
 # then press Esc
@@ -61,19 +62,18 @@ sudo apt-get -y install autoconf bc build-essential g++-8 gcc-8 clang-8 lld-8 ge
 ```
 
 ```bash
-sudo apt-cache show nvidia-jetpack
-```
-
-![Jetpack version](assets/20230412_120223_jetpack.png)
-
-After having seen the Jetpack version,, go to this [link](https://developer.download.nvidia.com/compute/redist/jp/). There find the mos apropiate version and copy the link. In our case the following one was selected *https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl*. So we execute the following command.
-
-```bash
 pip install --upgrade pip
 pip install --upgrade protobuf
 pip install aiohttp numpy=='1.19.4' scipy=='1.5.3' 
 export "LD_LIBRARY_PATH=/usr/lib/llvm-8/lib:$LD_LIBRARY_PATH"
 pip install --no-cache https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl
+```
+
+```bash
+git clone --recursive --branch 1.7 http:/github.com/pytorch/pytorch
+cd pytorch
+pip install -r requirements.txt
+python3.8 setup.py install
 ```
 
 After having installed the dependencies there are two options. One is to just use the yolov7.trt file to run the program and the second one is to do all from scratch. Both of them are explained bellow.
