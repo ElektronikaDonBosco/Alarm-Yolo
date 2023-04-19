@@ -4,7 +4,7 @@ Procedure to make inference in Jetson Nano with yolo-v7. [Here](Object_detection
 
 ## Set up Jetson Nano
 
-Go to [this](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#intro) step by step tutorial.
+Go to [this](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#intro) step by step tutorial. But do it with [this](https://ln5.sync.com/dl/741c98fe0/x8kxkhgs-cgmzk7rf-n4m7pyw8-h64tzbv5/view/default/11304846510004) image of [ubuntu20](https://github.com/Qengineering/Jetson-Nano-Ubuntu-20-image)
 
 ## Install dependecies and download packages
 
