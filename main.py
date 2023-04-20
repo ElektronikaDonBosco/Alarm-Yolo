@@ -30,17 +30,15 @@ thread1 = threading.Thread(target=tracking)
 def startCommand(update: Update, context: CallbackContext):
     buttons = [[KeyboardButton(text_laguntza),KeyboardButton(text_konektatu)]
                ,[KeyboardButton(text_piztu),KeyboardButton(text_itzali)]]
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Ongi etorri bot honetara, eman /laguntza akzioak ikusteko", reply_markup=ReplyKeyboardMarkup(buttons))
+    context.bot.send_message(chat_id=update.effective_chat.id, 
+                             text="Ongi etorri bot honetara. Bot honek etxeko alarma bat kontrolatzen du, pertsonarik sartu den edo ez ikusteko. Eman /laguntza akzioak ikusteko",
+                             reply_markup=ReplyKeyboardMarkup(buttons))
 
 
 def laguntza(update: Update, context: CallbackContext):
-    update.message.reply_text("""Botoietako aukerak :-
-    /konektatu - PLCra konektatu
-    /piztu - irteerak 1era jartzeko
-    /itzali - irteerak 0era itzaltzeko""")
-
-def connect(update: Update, context: CallbackContext):
-    update.message.reply_text("Konektatuta dago")
+    update.message.reply_text("""Botoietako aukerak :
+    /piztu - Alarma martxan jartzeko
+    /itzali - Alarma itzaltzeko""")
 
 def piztu(update: Update, context: CallbackContext):
     global thread1
@@ -82,7 +80,6 @@ def main(model_path):
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("hasi", startCommand))
-    updater.dispatcher.add_handler(CommandHandler('konektatu', connect))
     updater.dispatcher.add_handler(CommandHandler('piztu', piztu))
     updater.dispatcher.add_handler(CommandHandler('laguntza', laguntza))
     updater.dispatcher.add_handler(CommandHandler('itzali', itzali))
