@@ -38,7 +38,7 @@ def gstreamer_pipeline(
 
 class Inference ():
     def __init__(self,model_path):
-        self.modelpath = model_path
+        self.model_path = model_path
 
     def __call__(self):
         self.main()
@@ -56,8 +56,8 @@ class Inference ():
 
         return names
         
-    def loadmodel(self, model_path):
-        w = model_path if os.path.isfile(model_path) else './yolov7-tiny-nms.trt'
+    def loadmodel(self):
+        w = self.model_path if os.path.isfile(self.model_path) else './yolov7-tiny-nms.trt'
         device = torch.device('cuda:0')
 
         # Infer TensorRT Engine
@@ -66,6 +66,7 @@ class Inference ():
         trt.init_libnvinfer_plugins(logger, namespace="")
         with open(w, 'rb') as f, trt.Runtime(logger) as runtime:
             model = runtime.deserialize_cuda_engine(f.read())
+            print(model)
         bindings = OrderedDict()
         for index in range(model.num_bindings):
             name = model.get_binding_name(index)
@@ -156,7 +157,7 @@ class Inference ():
     
     def main(self):
 
-        bindings, binding_addrs, context, device = self.loadmodel(self.model_path)
+        bindings, binding_addrs, context, device = self.loadmodel()
         names = self.readnames()
         # colors = {name:[random.randint(0, 255) for _ in range(3)] for i,name in enumerate(names)}
 
@@ -183,10 +184,10 @@ class Inference ():
                     for det in classes:
                         if det == 0 or det == names[0]:
                             gv.PERSON_DETECTED = True
-                            yield frame
+                            return frame
                         else:
                             gv.PERSON_DETECTED = False
-                            yield None
+                            return None
 
             finally:
                 video_capture.release()

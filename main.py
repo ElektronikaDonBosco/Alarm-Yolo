@@ -1,96 +1,79 @@
-import additionals.inference as infer
+from additionals.inference import Inference
 import additionals.globals as gv
 import argparse
 import threading
-from telegram.ext import Updater, CommandHandler
+import telebot
 
 frame = None
 inference = None
 chat_id = ''
 
-text_laguntza = "/laguntza"
-text_piztu = "/piztu"
-text_itzali = "/itzali"
-text_konektatu = "/konektatuta?"
+bot = telebot.TeleBot("6099780796:AAEg4EMmD2iuRe0LJvedPHSnsFLu1mfzY3c")
 
-client = None
-
-def tracking(update: Update, context: CallbackContext):
+def tracking():
     global frame
     global inference
     global chat_id
+
     while gv.DETECTION_RUNNING:
-        frame = inference.next()
+        frame = inference()
         if gv.PERSON_DETECTED:
-            update.message.reply_text("Pertsona dago")
+            bot.send_message(chat_id, "Pertsona dago")
 
-thread1 = threading.Thread(target=tracking)
+@bot.message_handler(commands=['hasi', 'empezar', 'start'])
+def send_welcome(message):
+    global chat_id
+    chat_id = message[-1].chat.id
+    bot.reply_to(message, """Ongi etorri bot honetara, idatzi /laguntza aukerak ikusteko
+    Bienvenido a este bot, escribe /ayuda para ver la opciones
+    Welcome to this bot, write /help to see the options""")
 
-def startCommand(update, context):
-    buttons = [[KeyboardButton(text_laguntza)]
-               ,[KeyboardButton(text_piztu),KeyboardButton(text_itzali)]]
-    context.bot.send_message(chat_id=update.effective_chat.id, 
-                             text="Ongi etorri bot honetara. Bot honek etxeko alarma bat kontrolatzen du, pertsonarik sartu den edo ez ikusteko. Eman /laguntza akzioak ikusteko",
-                             reply_markup=ReplyKeyboardMarkup(buttons))
+@bot.message_handler(commands=['laguntza', 'ayuda', 'help'])
+def laguntza(message):
+    bot.reply_to(message, """Botoietako aukerak :-
+    /piztu - martxan jartzeko
+    /itzali - gelditzeko""")
 
-
-def laguntza(update, context):
-    update.message.reply_text("""Botoietako aukerak :
-    /piztu - Alarma martxan jartzeko
-    /itzali - Alarma itzaltzeko""")
-
-def piztu(update, context):
+@bot.message_handler(commands=['piztu', 'encender', 'turn_on'])
+def piztu(message):
     global thread1
     gv.DETECTION_RUNNING = True
     thread1.start()
-    update.message.reply_text("Piztu da")
+    bot.reply_to(message, "Piztu da - Se ha encendido - Turned on")
 
-def itzali(update, context):
+@bot.message_handler(commands=['itzali', 'apagar', 'turn_off'])
+def itzali(message):
     global frame
     global thread1
     thread1.stop()
     gv.DETECTION_RUNNING = False
     frame = None
-    update.message.reply_text("Itzali da")
+    bot.reply_to(message, message.text)
 
-def argazkia(update, context):
+@bot.message_handler(commands=['argazkia', 'foto', 'photo'])
+def argazkia(message):
     global frame
-    if frame != None:
-        context.bot.send_photo(chat_id=update.message.chat_id, photo=frame)
-        update.message.reply_text("Argazkia bidali da")
-    else:
-        update.message.reply_text("Ez dago argazkirik, beraz ez da bidali")
+    global chat_id
+    bot.send_photo(chat_id, frame)
+    bot.send_photo(chat_id, "FILEID")
 
-def error(update, context):
-    update.message.reply_text(
-        "Sorry '%s' is not a valid command" % update.message.text)
+client = None
 
-
-def unknown_text(update, context):
-    update.message.reply_text(
-        "Sorry I can't recognize you , you said '%s'" % update.message.text)
+thread1 = threading.Thread(target=tracking)
     
 def main(model_path):
     global inference
+    global bot
 
-    inference = infer(model_path)
-
-    updater = Updater("6099780796:AAEg4EMmD2iuRe0LJvedPHSnsFLu1mfzY3c")
-    dispatcher = updater.dispatcher
-
-    dispatcher.add_handler(CommandHandler("hasi", startCommand))
-    dispatcher.add_handler(CommandHandler('piztu', piztu))
-    dispatcher.add_handler(CommandHandler('laguntza', laguntza))
-    dispatcher.add_handler(CommandHandler('itzali', itzali))
-    dispatcher.add_error_handler(error)
-
-    updater.start_polling()
-
-    updater.idle()
+    print('Cargar modelo')
+    inference = Inference(model_path)
+    
+    print('Empezar bot')
+    bot.polling()
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a ArcHydro schema')
-    parser.add_argument('--model_path', value='models/yolov7-tiny-nms.trt', metavar='path', required=True,
+    parser.add_argument('--model_path', required=True,
                         help='the path to model')
     args = parser.parse_args()
 
