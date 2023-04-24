@@ -2,8 +2,7 @@ import additionals.inference as infer
 import additionals.globals as gv
 import argparse
 import threading
-from telegram import Update, KeyboardButton
-from telegram.ext import CallbackContext, Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler
 
 frame = None
 inference = None
@@ -27,26 +26,26 @@ def tracking(update: Update, context: CallbackContext):
 
 thread1 = threading.Thread(target=tracking)
 
-def startCommand(update: Update, context: CallbackContext):
-    buttons = [[KeyboardButton(text_laguntza),KeyboardButton(text_konektatu)]
+def startCommand(update, context):
+    buttons = [[KeyboardButton(text_laguntza)]
                ,[KeyboardButton(text_piztu),KeyboardButton(text_itzali)]]
     context.bot.send_message(chat_id=update.effective_chat.id, 
                              text="Ongi etorri bot honetara. Bot honek etxeko alarma bat kontrolatzen du, pertsonarik sartu den edo ez ikusteko. Eman /laguntza akzioak ikusteko",
                              reply_markup=ReplyKeyboardMarkup(buttons))
 
 
-def laguntza(update: Update, context: CallbackContext):
+def laguntza(update, context):
     update.message.reply_text("""Botoietako aukerak :
     /piztu - Alarma martxan jartzeko
     /itzali - Alarma itzaltzeko""")
 
-def piztu(update: Update, context: CallbackContext):
+def piztu(update, context):
     global thread1
     gv.DETECTION_RUNNING = True
     thread1.start()
     update.message.reply_text("Piztu da")
 
-def itzali(update: Update, context: CallbackContext):
+def itzali(update, context):
     global frame
     global thread1
     thread1.stop()
@@ -54,7 +53,7 @@ def itzali(update: Update, context: CallbackContext):
     frame = None
     update.message.reply_text("Itzali da")
 
-def argazkia(update: Update, context: CallbackContext):
+def argazkia(update, context):
     global frame
     if frame != None:
         context.bot.send_photo(chat_id=update.message.chat_id, photo=frame)
@@ -62,12 +61,12 @@ def argazkia(update: Update, context: CallbackContext):
     else:
         update.message.reply_text("Ez dago argazkirik, beraz ez da bidali")
 
-def unknown(update: Update, context: CallbackContext):
+def error(update, context):
     update.message.reply_text(
         "Sorry '%s' is not a valid command" % update.message.text)
 
 
-def unknown_text(update: Update, context: CallbackContext):
+def unknown_text(update, context):
     update.message.reply_text(
         "Sorry I can't recognize you , you said '%s'" % update.message.text)
     
@@ -76,20 +75,18 @@ def main(model_path):
 
     inference = infer(model_path)
 
-    updater = Updater(token="6099780796:AAEg4EMmD2iuRe0LJvedPHSnsFLu1mfzY3c")
+    updater = Updater("6099780796:AAEg4EMmD2iuRe0LJvedPHSnsFLu1mfzY3c")
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("hasi", startCommand))
-    updater.dispatcher.add_handler(CommandHandler('piztu', piztu))
-    updater.dispatcher.add_handler(CommandHandler('laguntza', laguntza))
-    updater.dispatcher.add_handler(CommandHandler('itzali', itzali))
-    updater.dispatcher.add_handler(MessageHandler(Filters.text, unknown))
-    updater.dispatcher.add_handler(MessageHandler(Filters.command, unknown_text))  # Filters out unknown commands
-
-    # Filters out unknown messages.
-    updater.dispatcher.add_handler(MessageHandler(Filters.text, unknown_text))
+    dispatcher.add_handler(CommandHandler('piztu', piztu))
+    dispatcher.add_handler(CommandHandler('laguntza', laguntza))
+    dispatcher.add_handler(CommandHandler('itzali', itzali))
+    dispatcher.add_error_handler(error)
 
     updater.start_polling()
+
+    updater.idle()
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create a ArcHydro schema')
