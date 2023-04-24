@@ -19,7 +19,19 @@ pip3 install --ignore-installed PyYAML
 pip3 install Pillow
 pip3 install pyTelegramBotAPI==0.3.6
 pip3 install nvidia-pyindex
-sudo apt-get install nvidia-tensorrt -y
+pip3 install pycuda
+sudo apt-get install nvidia-tensorrt nano -y
+```
+
+```bash
+nano .bashrc
+```
+
+Add this lines
+
+```shell
+export PATH=${PATH}:/usr/local/cuda/bin
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
 ```
 
 For Pytorch installation, first we need to install dependencies and check the Jetpack version:

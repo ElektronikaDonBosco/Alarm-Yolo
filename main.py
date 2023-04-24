@@ -1,4 +1,4 @@
-import additionals.trt_inference as Inference
+from additionals.inference import Inference as infer
 import additionals.globals as gv
 import argparse
 import threading
@@ -66,8 +66,8 @@ def main(model_path):
     global bot
 
     print('Cargar modelo')
-    inference = Inference()
-    inference.build_engine(model_path)
+    inference = infer(model_path)
+    inference.build_engine()
     
     print('Empezar bot')
     bot.polling()

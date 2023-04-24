@@ -4,10 +4,11 @@ import torch
 import time
 import numpy as np
 import tensorrt as trt
-from PIL import Image
-from collections import OrderedDict,namedtuple
-import os
-import random
+import pycuda.driver as cuda
+import pycuda.autoinit
+from albumentations import (Compose,Resize,)
+from albumentations.augmentations.transforms import Normalize
+from albumentations.pytorch.transforms import ToTensor
 
 def gstreamer_pipeline(
     sensor_id=0,
@@ -57,26 +58,31 @@ class Inference ():
         return names
         
     def loadmodel(self):
-        w = self.model_path if os.path.isfile(self.model_path) else './yolov7-tiny-nms.trt'
-        device = torch.device('cuda:0')
+        # initialize TensorRT engine and parse ONNX model
+        builder = trt.Builder(trt.Logger())
+        network = builder.create_network()
+        parser = trt.OnnxParser(network, trt.Logger())
 
-        # Infer TensorRT Engine
-        Binding = namedtuple('Binding', ('name', 'dtype', 'shape', 'data', 'ptr'))
-        logger = trt.Logger(trt.Logger.INFO)
-        trt.init_libnvinfer_plugins(logger, namespace="")
-        with open(w, 'rb') as f, trt.Runtime(logger) as runtime:
-            model = runtime.deserialize_cuda_engine(f.read())
-            print(model)
-        bindings = OrderedDict()
-        for index in range(model.num_bindings):
-            name = model.get_binding_name(index)
-            dtype = trt.nptype(model.get_binding_dtype(index))
-            shape = tuple(model.get_binding_shape(index))
-            data = torch.from_numpy(np.empty(shape, dtype=np.dtype(dtype))).to(device)
-            bindings[name] = Binding(name, dtype, shape, data, int(data.data_ptr()))
-        binding_addrs = OrderedDict((n, d.ptr) for n, d in bindings.items())
-        context = model.create_execution_context()
-        return bindings, binding_addrs, context, device
+        # allow TensorRT to use up to 1GB of GPU memory for tactic selection
+        builder.max_workspace_size = 1 << 30
+        # we have only one image in batch
+        builder.max_batch_size = 1
+        # use FP16 mode if possible
+        if builder.platform_has_fast_fp16:
+            builder.fp16_mode = True
+
+        # parse ONNX
+        with open(self.model_path, 'rb') as model:
+            print('Beginning ONNX file parsing')
+            parser.parse(model.read())
+        print('Completed parsing of ONNX file')
+
+        # generate TensorRT engine optimized for the target platform
+        print('Building an engine...')
+        engine = builder.build_cuda_engine(network)
+        context = engine.create_execution_context()
+        print("Completed creating Engine")
+        return engine, context
 
     def letterbox(self, im, new_shape=(640, 640), color=(114, 114, 114), auto=True, scaleup=True, stride=32):
         # Resize and pad image while meeting stride-multiple constraints
@@ -112,20 +118,22 @@ class Inference ():
         boxes /= r
         return boxes
 
-    def preprocess(self, img, device):
-        image = img.copy()
-        image, ratio, dwdh = self.letterbox(image, auto=False)
-        image = image.transpose((2, 0, 1))
-        image = np.expand_dims(image, 0)
-        image = np.ascontiguousarray(image)
+    def preprocess_image(img_path):
+        # transformations for the input data
+        transforms = Compose([
+            Resize(640, 640, interpolation=cv2.INTER_NEAREST),
+            Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+            ToTensor(),
+        ])
 
-        im = image.astype(np.float32)
-        im.shape
+        # read input image
+        input_img = cv2.imread(img_path)
+        # do transformations
+        input_data = transforms(image=input_img)["image"]
+        # prepare batch
+        batch_data = torch.unsqueeze(input_data, 0)
 
-        im = torch.from_numpy(im).to(device)
-        im/=255
-        im.shape
-        return im, ratio, dwdh
+        return batch_data
 
     def predict(self, im, binding_addrs, context, bindings):
         start = time.perf_counter()
@@ -143,31 +151,25 @@ class Inference ():
         scores = scores[0,:nums[0][0]]
         classes = classes[0,:nums[0][0]]
         return boxes, scores, classes
-
-    def drawdata(self, im, boxes, scores, classes, names, colors, ratio, dwdh):
-        for box,score,cl in zip(boxes,scores,classes):
-            box = self.postprocess(box,ratio,dwdh).round().int()
-            name = names[cl]
-            color = colors[name]
-            name += ' ' + str(round(float(score),3))
-            cv2.rectangle(im,box[:2].tolist(),box[2:].tolist(),color,2)
-            cv2.putText(im,name,(int(box[0]), int(box[1]) - 2),cv2.FONT_HERSHEY_SIMPLEX,0.75,color,thickness=2)
-
-        return Image.fromarray(im)
     
     def main(self):
 
-        bindings, binding_addrs, context, device = self.loadmodel()
-        names = self.readnames()
-        # colors = {name:[random.randint(0, 255) for _ in range(3)] for i,name in enumerate(names)}
-
-        # warmup for 10 times
-        for _ in range(10):
-            tmp = torch.randn(1,3,640,640).to(device)
-            binding_addrs['images'] = int(tmp.data_ptr())
-            context.execute_v2(list(binding_addrs.values()))
+        engine, context = self.build_engine()
+        # get sizes of input and output and allocate memory required for input data and for output data
+        for binding in engine:
+            if engine.binding_is_input(binding):  # we expect only one input
+                input_shape = engine.get_binding_shape(binding)
+                input_size = trt.volume(input_shape) * engine.max_batch_size * np.dtype(np.float32).itemsize  # in bytes
+                device_input = cuda.mem_alloc(input_size)
+            else:  # and one output
+                output_shape = engine.get_binding_shape(binding)
+                # create page-locked memory buffers (i.e. won't be swapped to disk)
+                host_output = cuda.pagelocked_empty(trt.volume(output_shape) * engine.max_batch_size, dtype=np.float32)
+                device_output = cuda.mem_alloc(host_output.nbytes)
 
         # take image
+        names = self.readnames()
+        stream = cuda.Stream()
         video_capture = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
         if video_capture.isOpened():
             try:
@@ -177,9 +179,17 @@ class Inference ():
                     # Under GTK+ (Jetson Default), WND_PROP_VISIBLE does not work correctly. Under Qt it does
                     # GTK - Substitute WND_PROP_AUTOSIZE to detect if window has been closed by user
                     img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    im, ratio, dwdh = self.preprocess(img, device)
+
+                    # preprocess input data
+                    host_input = np.array(self.preprocess_image("turkish_coffee.jpg").numpy(), dtype=np.float32, order='C')
                     
-                    boxes, scores, classes = self.predict(im, binding_addrs, context, bindings)
+                    # run inference
+                    context.execute_async(bindings=[int(device_input), int(device_output)], stream_handle=stream.handle)
+                    cuda.memcpy_dtoh_async(host_output, device_output, stream)
+                    stream.synchronize()
+
+                    # postprocess results
+                    boxes, scores, classes = torch.Tensor(host_output).reshape(engine.max_batch_size, output_shape[0])
 
                     for det in classes:
                         if det == 0 or det == names[0]:
