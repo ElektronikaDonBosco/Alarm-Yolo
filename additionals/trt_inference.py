@@ -1,4 +1,3 @@
-from pytorch_model import preprocess_image, postprocess
 import torch
 import pycuda.driver as cuda
 import pycuda.autoinit
@@ -38,8 +37,23 @@ def build_engine(onnx_file_path):
     print("Completed creating Engine")
     return engine, context
 
+def preprocess(self, img, device):
+        image = img.copy()
+        image, ratio, dwdh = self.letterbox(image, auto=False)
+        image = image.transpose((2, 0, 1))
+        image = np.expand_dims(image, 0)
+        image = np.ascontiguousarray(image)
+
+        im = image.astype(np.float32)
+        im.shape
+
+        im = torch.from_numpy(im).to(device)
+        im/=255
+        im.shape
+        return im, ratio, dwdh
 
 def main():
+    device = torch.device('cuda:0')
     # initialize TensorRT engine and parse ONNX model
     engine, context = build_engine(ONNX_FILE_PATH)
     # get sizes of input and output and allocate memory required for input data and for output data
@@ -59,7 +73,7 @@ def main():
 
 
     # preprocess input data
-    host_input = np.array(preprocess_image("turkish_coffee.jpg").numpy(), dtype=np.float32, order='C')
+    host_input = np.array(preprocess_image("turkish_coffee.jpg").numpy(), device)
     cuda.memcpy_htod_async(device_input, host_input, stream)
 
     # run inference
@@ -70,7 +84,6 @@ def main():
     # postprocess results
     output_data = torch.Tensor(host_output).reshape(engine.max_batch_size, output_shape[0])
     return output_data
-    postprocess(output_data)
 
 
 if __name__ == '__main__':
