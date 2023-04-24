@@ -54,7 +54,7 @@ class Inference ():
 
         return names
         
-    def buil_engine(self):
+    def build_engine(self):
         # initialize TensorRT engine and parse ONNX model
         builder = trt.Builder(trt.Logger())
         network = builder.create_network()
