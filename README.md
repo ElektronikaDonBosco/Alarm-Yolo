@@ -20,6 +20,7 @@ pip3 install Pillow
 pip3 install pyTelegramBotAPI==0.3.6
 pip3 install nvidia-pyindex
 pip3 install pycuda
+pip3 install -U albumentations --no-binary qudida,albumentations
 sudo apt-get install nvidia-tensorrt nano -y
 ```
 

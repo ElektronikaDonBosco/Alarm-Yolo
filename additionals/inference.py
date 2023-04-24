@@ -6,9 +6,6 @@ import numpy as np
 import tensorrt as trt
 import pycuda.driver as cuda
 import pycuda.autoinit
-from albumentations import (Compose,Resize,)
-from albumentations.augmentations.transforms import Normalize
-from albumentations.pytorch.transforms import ToTensor
 
 def gstreamer_pipeline(
     sensor_id=0,
@@ -119,17 +116,11 @@ class Inference ():
         return boxes
 
     def preprocess_image(img_path):
-        # transformations for the input data
-        transforms = Compose([
-            Resize(640, 640, interpolation=cv2.INTER_NEAREST),
-            Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-            ToTensor(),
-        ])
-
+        
         # read input image
         input_img = cv2.imread(img_path)
         # do transformations
-        input_data = transforms(image=input_img)["image"]
+        input_data = cv2.resize(input_img, (640, 640), interpolation=cv2.INTER_NEAREST)
         # prepare batch
         batch_data = torch.unsqueeze(input_data, 0)
 
