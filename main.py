@@ -1,4 +1,4 @@
-from additionals.inference import Inference
+import additionals.trt_inference as Inference
 import additionals.globals as gv
 import argparse
 import threading
@@ -16,7 +16,7 @@ def tracking():
     global chat_id
 
     while gv.DETECTION_RUNNING:
-        frame = inference()
+        frame = inference.main()
         if gv.PERSON_DETECTED:
             bot.send_message(chat_id, "Pertsona dago")
 
@@ -66,7 +66,8 @@ def main(model_path):
     global bot
 
     print('Cargar modelo')
-    inference = Inference(model_path)
+    inference = Inference()
+    inference.build_engine(model_path)
     
     print('Empezar bot')
     bot.polling()
