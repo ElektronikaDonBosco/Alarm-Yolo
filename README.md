@@ -53,11 +53,21 @@ sudo apt-cache show nvidia-jetpack
 After having seen the Jetpack version,, go to this [link](https://developer.download.nvidia.com/compute/redist/jp/). There find the mos apropiate version and copy the link. In our case the following one was selected *https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl*. So we execute the following command.
 
 ```bash
-python3 -m pip install --upgrade pip
-python3 -m pip install --upgrade protobuf
-python3 -m pip install aiohttp numpy=='1.19.4' scipy=='1.5.3' 
-export "LD_LIBRARY_PATH=/usr/lib/llvm-8/lib:$LD_LIBRARY_PATH"
-python3 -m pip install --no-cache https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl
+wget https://nvidia.box.com/shared/static/fjtbno0vpo676a25cgvuqc1wty0fkkg6.whl
+sudo apt-get install python3-pip libopenblas-base libopenmpi-dev libomp-dev
+pip3 install Cython
+pip3 install numpy torch-1.10.0-cp36-cp36m-linux_aarch64.whl
+```
+
+Then install torchvision
+
+```bash
+sudo apt-get install libjpeg-dev zlib1g-dev libpython3-dev libavcodec-dev libavformat-dev libswscale-dev
+git clone --branch v0.11.1 https://github.com/pytorch/vision torchvision   # see below for version of torchvision to download
+cd torchvision
+export BUILD_VERSION=0.11.1  # where 0.x.0 is the torchvision version  
+python3 setup.py install --user
+cd ../  # attempting to load torchvision from build dir will result in import error
 ```
 
 After having installed the dependencies there are two options. One is to just use the yolov7.trt file to run the program and the second one is to do all from scratch. Both of them are explained bellow.
