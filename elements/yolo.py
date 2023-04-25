@@ -1,8 +1,8 @@
 import torch
 import cv2
 import numpy as np
-from additionals.models.experimental import attempt_load
-from additionals.utils.general import non_max_suppression
+from models.experimental import attempt_load
+from utils.general import non_max_suppression
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
