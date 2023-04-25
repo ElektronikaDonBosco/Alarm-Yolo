@@ -45,7 +45,33 @@ python3 setup.py install --user
 cd ../  # attempting to load torchvision from build dir will result in import error
 ```
 
+onnx install
+
+```bash
+sudp apt-get insatll protobuf-compiler libprotoc-dev
+pip3 install onnx==1.11.0 --user --verbose
+```
+
+```bash
+sudo apt-get install libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-bad1.0-dev gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio 
+sudo apt-get install gstreamer1.0-tools 
+```
+
 After having installed the dependencies there are two options. One is to just use the yolov7.trt file to run the program and the second one is to do all from scratch. Both of them are explained bellow.
+
+```bash
+cd 
+docker pull nvcr.io/nvidia/l4t-ml:r32.5.0-py3 
+sudo docker run -it --rm --gpus all -e DISPLAY=:0 -v /tmp/.X11-unix:/tmp/.X11-unix -v /home/nvidia/Documents:/home/nvidia/Documents -v /tmp/argus_socket:/tmp/argus_socket --device /dev/video0:/dev/video0 --network host nvcr.io/nvidia/l4t-ml:r32.5.0-py3 
+```
+
+```bash
+apt-get update 
+apt-get install nano 
+apt-get install python3-tk 
+pip3 install tqdm 
+```
+
 
 ## Telegram bot creation
 
