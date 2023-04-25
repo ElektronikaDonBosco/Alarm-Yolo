@@ -49,22 +49,19 @@ print(gstreamer_pipeline(flip_method=0))
 def inference():
     cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
     if cap.isOpened():
-        ret, frame = cap.read()
-        if ret:
-            # detection process
-            objs = Object_detector.detect(frame)
+        while gv.DETECTION_RUNNING:
+            ret, frame = cap.read()
+            if ret:
+                # detection process
+                objs = Object_detector.detect(frame)
 
-            # plotting
-            for obj in objs:
-                
-                label = obj['label']
-                if 0 == Object_classes[0].index(label):
-                    gv.PERSON_DETECTED = True
-                    return frame
-                
-
-        if gv.DETECTION_RUNNING == False:
-            break
+                # plotting
+                for obj in objs:
+                    
+                    label = obj['label']
+                    if 0 == Object_classes[0].index(label):
+                        gv.PERSON_DETECTED = True
+                        return frame
         cap.release()
     else:
         print("Unable to open camera")
