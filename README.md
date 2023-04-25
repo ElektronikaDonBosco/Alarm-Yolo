@@ -24,37 +24,12 @@ pip3 install -U albumentations --no-binary qudida,albumentations
 sudo apt-get install nvidia-tensorrt nano -y
 ```
 
-```bash
-nano .bashrc
-```
-
-Add this lines
-
-```shell
-export PATH=${PATH}:/usr/local/cuda/bin
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
-
-export "LD_LIBRARY_PATH=/usr/lib/llvm-8/lib:$LD_LIBRARY_PATH"
-```
 
 For Pytorch installation, first we need to install dependencies and check the Jetpack version:
 
 ```bash
-sudo apt-get -y update;
-sudo apt-get -y install autoconf bc build-essential g++-8 gcc-8 clang-8 lld-8 gettext-base gfortran-8 iputils-ping libbz2-dev libc++-dev libcgal-dev libffi-dev libfreetype6-dev libhdf5-dev libjpeg-dev liblzma-dev libncurses5-dev libncursesw5-dev libpng-dev libreadline-dev libssl-dev libsqlite3-dev libxml2-dev libxslt-dev locales moreutils openssl python-openssl rsync scons python3-pip libopenblas-dev
-```
-
-```bash
-sudo apt-cache show nvidia-jetpack
-```
-
-![Jetpack version](assets/20230412_120223_jetpack.png)
-
-After having seen the Jetpack version,, go to this [link](https://developer.download.nvidia.com/compute/redist/jp/). There find the mos apropiate version and copy the link. In our case the following one was selected *https://developer.download.nvidia.com/compute/redist/jp/v461/pytorch/torch-1.11.0a0+17540c5+nv22.01-cp36-cp36m-linux_aarch64.whl*. So we execute the following command.
-
-```bash
 wget https://nvidia.box.com/shared/static/fjtbno0vpo676a25cgvuqc1wty0fkkg6.whl
-sudo apt-get install python3-pip libopenblas-base libopenmpi-dev libomp-dev
+sudo apt-get install python3-pip libopenblas-base libopenmpi-dev libomp-dev libomp5
 pip3 install Cython
 pip3 install numpy torch-1.10.0-cp36-cp36m-linux_aarch64.whl
 ```
