@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from elements.yolo import OBJ_DETECTION
+from additionals.elements.yolo import OBJ_DETECTION
 import additionals.globals as gv
 
 Object_classes = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light',
