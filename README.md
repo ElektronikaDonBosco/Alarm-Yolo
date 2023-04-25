@@ -62,7 +62,7 @@ After having installed the dependencies there are two options. One is to just us
 ```bash
 cd 
 docker pull nvcr.io/nvidia/l4t-ml:r32.5.0-py3 
-sudo docker run -it --rm --gpus all -e DISPLAY=:0 -v /tmp/.X11-unix:/tmp/.X11-unix -v /home/nvidia/Documents:/home/nvidia/Documents -v /tmp/argus_socket:/tmp/argus_socket --device /dev/video0:/dev/video0 --network host nvcr.io/nvidia/l4t-ml:r32.5.0-py3 
+sudo docker run -it --rm --gpus all -e DISPLAY=:0 -v /tmp/.X11-unix:/tmp/.X11-unix -v /home/donbosco:/home/donbosco -v /tmp/argus_socket:/tmp/argus_socket --device /dev/video0:/dev/video0 --network host nvcr.io/nvidia/l4t-ml:r32.5.0-py3 
 ```
 
 ```bash
