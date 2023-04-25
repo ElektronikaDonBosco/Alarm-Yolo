@@ -1,22 +1,20 @@
-from additionals.inference import Inference as infer
+from additionals.inference import inference
 import additionals.globals as gv
 import argparse
 import threading
 import telebot
 
 frame = None
-inference = None
 chat_id = ''
 
 bot = telebot.TeleBot("6099780796:AAEg4EMmD2iuRe0LJvedPHSnsFLu1mfzY3c")
 
 def tracking():
     global frame
-    global inference
     global chat_id
 
     while gv.DETECTION_RUNNING:
-        frame = inference.main()
+        frame = inference
         if gv.PERSON_DETECTED:
             bot.send_message(chat_id, "Pertsona dago")
 
@@ -61,21 +59,11 @@ client = None
 
 thread1 = threading.Thread(target=tracking)
     
-def main(model_path):
-    global inference
+def main():
     global bot
-
-    print('Cargar modelo')
-    inference = infer(model_path)
-    inference.build_engine()
     
     print('Empezar bot')
     bot.polling()
     
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Create a ArcHydro schema')
-    parser.add_argument('--model_path', required=True,
-                        help='the path to model')
-    args = parser.parse_args()
-
-    main(args.model_path)
+    main()
