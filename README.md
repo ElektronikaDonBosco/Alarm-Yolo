@@ -33,6 +33,8 @@ Add this lines
 ```shell
 export PATH=${PATH}:/usr/local/cuda/bin
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
+
+export "LD_LIBRARY_PATH=/usr/lib/llvm-8/lib:$LD_LIBRARY_PATH"
 ```
 
 For Pytorch installation, first we need to install dependencies and check the Jetpack version:

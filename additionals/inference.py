@@ -120,7 +120,7 @@ class Inference ():
         # read input image
         input_img = cv2.imread(img_path)
         # do transformations
-        input_data = cv2.resize(input_img, (240, 240), interpolation=cv2.INTER_NEAREST)
+        input_data = cv2.resize(input_img, (256, 256), interpolation=cv2.INTER_NEAREST)
         # prepare batch
         batch_data = torch.unsqueeze(input_data, 0)
 
