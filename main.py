@@ -2,12 +2,12 @@ import threading
 import telebot
 import numpy as np
 import additionals.globals as gv
-import jetson_inference
-import jetson_utils
+import jetson.inference
+import jetson.utils
 
-net = jetson_inference.detectNet("ssd-mobilenet-v2", threshold=0.5)
-camera = jetson_utils.videoSource("csi://0")      # '/dev/video0' for V4L2
-display = jetson_utils.videoOutput("display://0") # 'my_video.mp4' for file
+net = jetson.inference.detectNet("ssd-mobilenet-v2", threshold=0.5)
+camera = jetson.utils.videoSource("/dev/video0")  #for V4L2 else 'csi://0' for csi
+display = jetson.utils.videoOutput("display://0") # 'my_video.mp4' for file
 
 detecting = False 
 render_img = False
@@ -19,16 +19,15 @@ bot = telebot.TeleBot("6099780796:AAEg4EMmD2iuRe0LJvedPHSnsFLu1mfzY3c")
 def tracking(message):
     global frame
     while gv.DETECTION_RUNNING:
-        img = camera.Capture()
-        detections = net.Detect(img)
+        frame = camera.Capture()
+        detections = net.Detect(frame)
         if render_img:
-            display.Render(img)
+            display.Render(frame)
             display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
         for detection in detections:
-            detection.ClassID
-            
-        chat_id = message.chat.id
-        bot.reply_to(message, "Pertsona dago")
+            if detection.ClassID == 1:
+                chat_id = message.chat.id
+                bot.send_message(chat_id, "Pertsona dago")
 
 @bot.message_handler(commands=['hasi', 'empezar', 'start'])
 def send_welcome(message):
@@ -78,7 +77,9 @@ def itzali(message):
 def argazkia(message):
     global frame
     chat_id = message.chat.id
-    bot.send_photo(chat_id, "https://github.com/mikelalda/Alarm-Yolo/raw/master/assets/20230412_120813_Screenshot-2022-12-16-092357.png")
+    if frame == None:
+        frame = camera.Capture()
+    bot.send_photo(chat_id, frame)
     bot.send_photo(chat_id, "FILEID")
 
 client = None
