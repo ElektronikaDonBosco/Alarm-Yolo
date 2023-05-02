@@ -69,9 +69,9 @@ def echo_all(message):
 def main():
     global bot
     
-    print('Empezar bot')
-    bot.polling()
     print('Empezar bot...')
+    bot.polling()
+    print('Apagando bot...')
     
 if __name__ == '__main__':
     main()
