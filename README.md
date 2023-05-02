@@ -72,6 +72,6 @@ In the file Alarm-Yolo/main.py we need to change the line 17 with our token.
 Once having done all the steps, run this in the docker terminal.
 
 ```bash
-pip3 install pyTelegramBotAPI==0.3.6
+python3 -m pip install pyTelegramBotAPI==0.3.6
 python3 main.py
 ```

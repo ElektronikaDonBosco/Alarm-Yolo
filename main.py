@@ -12,12 +12,10 @@ display = jetson.utils.videoOutput("display://0") # 'my_video.mp4' for file
 detecting = False 
 render_img = False
 frame = None
-thread1 = None
 
 bot = telebot.TeleBot("6099780796:AAEg4EMmD2iuRe0LJvedPHSnsFLu1mfzY3c")
 
 def tracking(message):
-    global frame
     while gv.DETECTION_RUNNING:
         frame = camera.Capture()
         detections = net.Detect(frame)
@@ -54,7 +52,6 @@ def laguntza(message):
 
 @bot.message_handler(commands=['piztu', 'encender', 'turn_on'])
 def piztu(message):
-    global thread1
     gv.DETECTION_RUNNING = True
     thread1 = threading.Thread(target=tracking, args=(message,))
     thread1.start()
@@ -62,20 +59,15 @@ def piztu(message):
 
 @bot.message_handler(commands=['itzali', 'apagar', 'turn_off'])
 def itzali(message):
-    global frame
-    global thread1
     gv.DETECTION_RUNNING = False
-    thread1.stop()
-    frame = None
     bot.send_message(message.chat.id,"Itzali da - Se ha apagado - Turned off")
-
-client = None
 
 def main():
     global bot
     
     print('Empezar bot')
     bot.polling()
+    print('Empezar bot...')
     
 if __name__ == '__main__':
     main()
