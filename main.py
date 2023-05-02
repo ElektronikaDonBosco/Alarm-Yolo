@@ -26,35 +26,31 @@ def tracking(message):
             display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
         for detection in detections:
             if detection.ClassID == 1:
-                chat_id = message.chat.id
-                bot.send_message(chat_id, "Pertsona dago")
+                bot.send_message(message.chat.id, "Pertsona dago")
 
 @bot.message_handler(commands=['hasi', 'empezar', 'start'])
 def send_welcome(message):
-    bot.reply_to(message, """Ongi etorri bot honetara, idatzi /laguntza aukerak ikusteko
+    bot.send_message(message.chat.id, """Ongi etorri bot honetara, idatzi /laguntza aukerak ikusteko
     Bienvenido a este bot, escribe /ayuda para ver la opciones
     Welcome to this bot, write /help to see the options""")
 
 @bot.message_handler(commands=['laguntza'])
 def laguntza(message):
-    bot.reply_to(message, """Botoietako aukerak :-
+    bot.send_message(message.chat.id, """Botoietako aukerak :-
     /piztu - martxan jartzeko
-    /itzali - gelditzeko
-    /argazkia - argazkia bidaltzeko""")
+    /itzali - gelditzeko""")
 
 @bot.message_handler(commands=['ayuda'])
 def laguntza(message):
-    bot.reply_to(message, """Botoietako aukerak :-
+    bot.send_message(message.chat.id, """Botoietako aukerak :-
     /encender - para poner en marcha
-    /apagar - para parar
-    /foto - para pedir foto""")
+    /apagar - para parar""")
 
 @bot.message_handler(commands=['help'])
 def laguntza(message):
-    bot.reply_to(message, """Botoietako aukerak :-
+    bot.send_message(message.chat.id, """Botoietako aukerak :-
     /turn_on - to turn on
-    /turn_off - to turn off
-    /photo - to take a photo""")
+    /turn_off - to turn off""")
 
 @bot.message_handler(commands=['piztu', 'encender', 'turn_on'])
 def piztu(message):
@@ -62,7 +58,7 @@ def piztu(message):
     gv.DETECTION_RUNNING = True
     thread1 = threading.Thread(target=tracking, args=(message,))
     thread1.start()
-    bot.reply_to(message, "Piztu da - Se ha encendido - Turned on")
+    bot.send_message(message.chat.id, "Piztu da - Se ha encendido - Turned on")
 
 @bot.message_handler(commands=['itzali', 'apagar', 'turn_off'])
 def itzali(message):
@@ -71,19 +67,9 @@ def itzali(message):
     gv.DETECTION_RUNNING = False
     thread1.stop()
     frame = None
-    bot.reply_to(message, message.text)
-
-@bot.message_handler(commands=['argazkia', 'foto', 'photo'])
-def argazkia(message):
-    global frame
-    chat_id = message.chat.id
-    if frame == None:
-        frame = camera.Capture()
-    bot.send_photo(chat_id, frame)
-    bot.send_photo(chat_id, "FILEID")
+    bot.send_message(message.chat.id,"Itzali da - Se ha apagado - Turned off")
 
 client = None
-
 
 def main():
     global bot
