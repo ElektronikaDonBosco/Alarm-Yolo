@@ -63,6 +63,10 @@ def itzali(message):
     gv.DETECTION_RUNNING = False
     bot.send_message(message.chat.id,"Itzali da - Se ha apagado - Turned off")
 
+@bot.message_handler(func=lambda message: True)
+def echo_all(message):
+	bot.reply_to(message, message.text)
+
 def main():
     global bot
     
