@@ -53,8 +53,9 @@ def laguntza(message):
 @bot.message_handler(commands=['piztu', 'encender', 'turn_on'])
 def piztu(message):
     gv.DETECTION_RUNNING = True
-    thread1 = threading.Thread(target=tracking, args=(message,))
-    thread1.start()
+    # thread1 = threading.Thread(target=tracking, args=(message,))
+    # thread1.start()
+    tracking(message)
     bot.send_message(message.chat.id, "Piztu da - Se ha encendido - Turned on")
 
 @bot.message_handler(commands=['itzali', 'apagar', 'turn_off'])
