@@ -13,7 +13,7 @@ detecting = False
 render_img = False
 frame = None
 
-bot = telebot.TeleBot("6099780796:AAEg4EMmD2iuRe0LJvedPHSnsFLu1mfzY3c", parse_mode=None)
+bot = telebot.TeleBot("6068562840:AAHi7Oq9fXq3F3IiZXm-f0VuZ-s6p8sx8Hk", parse_mode=None)
 
 def tracking(message):
     while gv.DETECTION_RUNNING:
