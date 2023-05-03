@@ -1,6 +1,6 @@
 # Jetson Nano Object detection alarm
 
-Procedure to make inference in Jetson Nano with yolo-v7. [Here](Object_detection_methods.md) you could find more information about object detection methods
+Procedure to make inference in Jetson Nano.
 
 ## Set up Jetson Nano
 
