@@ -24,7 +24,7 @@ sudo apt-get install nano
 First of all we need to clone the repository of jetson inference and go to the folder jetson_inference.
 
 ```bash
-git clone https://github.com/mikelalda/Alarm-Yolo.git
+git clone https://github.com/ElektronikaDonBosco/Alarm-Yolo.git
 
 ```
 
@@ -39,7 +39,7 @@ Change the file jetson-inference/docker/tag.sh line 25 CONTAINER_IMAGE="jetson-i
 
 ```bash
 #line 25 CONTAINER_IMAGE="jetson-inference:r32.5.0" to:
-CONTAINER_IMAGE="mikelalda/jetson-inference:donbosco"
+CONTAINER_IMAGE="ElektronikaDonBosco/jetson-inference:donbosco"
 ```
 
 Each time to run the container follow the next steps:
