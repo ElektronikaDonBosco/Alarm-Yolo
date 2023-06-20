@@ -19,7 +19,7 @@ sudo modprobe v4l2loopback
 sudo apt-get install nano 
 ```
 
-## Preàre the docker container
+## Prepare the docker container
 
 First of all we need to clone the repository of jetson inference and go to the folder jetson_inference.
 
