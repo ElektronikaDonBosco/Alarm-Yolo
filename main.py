@@ -10,10 +10,11 @@ camera = jetson.utils.videoSource("/dev/video0")  #for V4L2 else 'csi://0' for c
 display = jetson.utils.videoOutput("display://0") # 'my_video.mp4' for file
 
 detecting = False 
-render_img = False
+render_img = False # False=do not see camera image at screen. True=See camera image at screen.
 frame = None
 
-bot = telebot.TeleBot("6068562840:AAHi7Oq9fXq3F3IiZXm-f0VuZ-s6p8sx8Hk", parse_mode=None)
+bot = telebot.TeleBot("6068562840:AAHi7Oq9fXq3F3IiZXm-f0VuZ-s6p8sx8Hk", parse_mode=None) #insert here the API KEY provided by bot at Telegram
+
 
 def tracking(message):
     while gv.DETECTION_RUNNING:
@@ -24,8 +25,9 @@ def tracking(message):
             display.SetStatus("Object Detection | Network {:.0f} FPS".format(net.GetNetworkFPS()))
         for detection in detections:
             if detection.ClassID == 1:
-                bot.send_message(message.chat.id, "Pertsona dago")
+                bot.send_message(message.chat.id, "Pertsona/Persona/Person") # this is the message displayed at Telegram
 
+#Messages that will be displayed at Telegram
 @bot.message_handler(commands=['hasi', 'empezar', 'start'])
 def send_welcome(message):
     bot.send_message(message.chat.id, """Ongi etorri bot honetara, idatzi /laguntza aukerak ikusteko
