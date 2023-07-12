@@ -86,7 +86,7 @@ Once everything is set and installed we can run the inference. This are the step
 
 1 - Make sure you have your own Telegram API key at main.py (see instructions above)
 
-2 - Run docker
+2 - Open a Terminal window and run docker
 ```bash
 cd jetson-inference
 docker/run.sh --volume home/donbosco/Alarm-Yolo:/Alarm-Yolo
