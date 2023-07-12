@@ -11,7 +11,7 @@ Go to [this](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano
 
 ## Install dependecies and download packages
 
-Firs of all we will have to install python dependecies. For that open a terminal an execute the followin commands.
+Firs of all we will have to install python dependecies. For that open a terminal an execute the following commands.
 
 ```bash
 sudo apt-get update
