@@ -51,7 +51,7 @@ Each time to run the container follow the next steps:
 
 ```bash
 cd jetson-inference
-docker/run.sh --volume path_to/Alarm-Yolo:/Alarm-Yolo
+docker/run.sh --volume path_to/Alarm-Yolo:/Alarm-Yolo #Beware that you must use your own computer path.
 ```
 
 ## Telegram bot creation
