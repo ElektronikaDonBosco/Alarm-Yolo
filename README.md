@@ -1,3 +1,5 @@
+Before starting with the description of the project, we would like to thanks MikelAlda for the help given during the project development.
+
 # Jetson Nano People detection alarm
 
 Procedure to make inference in Jetson Nano.
