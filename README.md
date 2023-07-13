@@ -7,6 +7,14 @@ Procedure to make inference in Jetson Nano.
 Jetson-inference will be used to detect people in a house for example. Specifically, it ensures the alarm system is only activated upon detecting people, distinguishing them from pets. This reliable feature makes it an ideal choice for home security. Whenever a person is detected, Jetson-inference promptly dispatches a notification via Telegram.
 
 
+## Material used in the project
+- Jetson Nano
+
+- Webcam
+
+- Smartphone with Telegram
+
+
 ## Set up Jetson Nano
 
 Go to [this](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit#intro) step by step tutorial.
